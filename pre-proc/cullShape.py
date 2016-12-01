@@ -1,6 +1,7 @@
+#!/usr/bin/python
 import shapefile 
 
-pathToFile = ("/mnt/c/Users/joseph/Documents/Code/BigData/Neighborhoods/data/census/counties/tl_2016_us_county")
+pathToFile = "/home/sir/Neighborhoods/Data/Census/Tracts/tl_2010_36_tract10"
 sf = shapefile.Reader(pathToFile)
 
 #Pull out othe points that we want saved
@@ -30,12 +31,16 @@ print indicies
 
 e = shapefile.Editor(pathToFile)
 
-for i in range (len(records)-1, 0, -1):
+count = 0
+
+for i in range (len(records)-1, -1, -1):
     if (i not in indicies):
         e.delete(i)
         del e.records[i]
+        count = count +1
     else: 
-        print i 
+        print records[i].record
 
-e.save(pathToFile)
+print str(count) + " culled."
+e.save(pathToFile+"Culled")
 
