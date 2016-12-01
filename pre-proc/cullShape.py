@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import shapefile 
 
-pathToFile = "/home/sir/Neighborhoods/Data/Census/Tracts/tl_2010_36_tract10"
+pathToFile = "/home/sir/Neighborhoods/Data/Census/Blocks/tl_2010_36_tabblock10"
 sf = shapefile.Reader(pathToFile)
 
 #Pull out othe points that we want saved
