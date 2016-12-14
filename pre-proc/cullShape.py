@@ -24,7 +24,7 @@ for i in range(len(records)):
     if (records[i].record[1] in counties and records[i].record[0] == newYorkFIPS):
         indicies.append(i)
 
-print indicies
+print(indicies)
 
 #open the shapefile for reading. 
 #Remove all records/shapes execpt for the five that were found above.
@@ -39,8 +39,8 @@ for i in range (len(records)-1, -1, -1):
         del e.records[i]
         count = count +1
     else: 
-        print records[i].record
+        print(records[i].record)
 
-print str(count) + " culled."
+print(str(count) + " culled.")
 e.save(pathToFile+"Culled")
 
