@@ -27,7 +27,9 @@ def BucketTime(x):
 
 array2 = array1.map(lambda x: BucketTime(x))
 #map to county + Tract + block + day of week + hour + minute (Bucket))
-array3 = array2.map(lambda x: (x[6]+":"+x[7]+":"+x[8]+"-"+str(x[12])+":"+str(x[0].hour)+":"+str(x[0].minute), 1))
+#array3 = array2.map(lambda x: (x[6]+":"+x[7]+":"+x[8]+"-"+str(x[12])+":"+str(x[0].hour)+":"+str(x[0].minute), 1))
+array3 = array2.map(lambda x: (x[6]+":"+x[7]+"-"+str(x[12])+":"+str(x[0].hour)+":"+str(x[0].minute), 1))
+#
 #count 
 step4 = array3.reduceByKey( lambda a,b: a+b)
 
