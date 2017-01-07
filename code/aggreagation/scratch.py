@@ -1,5 +1,14 @@
 from datetime import datetime
 from datetime import timedelta
+from pyspark import SparkConf, SparkContext
+
+conf = (SparkConf()
+        .setMaster("local[*]")
+        .setAppName("My app")
+        .set("spark.executor.memory", "8g")
+        .set("spark.executor.cores", "8"))
+
+sc = SparkContext(conf = conf)
 
 #test = sc.textFile("/home/sir/Neighborhoods/Data/Test/test_bucket_times.csv")
 test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2016-out/1-yellow-out.csv")
@@ -20,8 +29,8 @@ def convertToDatetime(x):
 array1 = array.map( lambda x: convertToDatetime(x))
 
 def BucketTime(x): 
-    x[0] = x[0] - timedelta(minutes=x[0].minute % 5, seconds = x[0].second, microseconds = x[0].microsecond)
-    x[1] = x[1] - timedelta(minutes=x[1].minute % 5, seconds = x[1].second, microseconds = x[1].microsecond)
+    x[0] = x[0] - timedelta(minutes=x[0].minute % 15, seconds = x[0].second, microseconds = x[0].microsecond)
+    x[1] = x[1] - timedelta(minutes=x[1].minute % 15, seconds = x[1].second, microseconds = x[1].microsecond)
     return x
 
 
