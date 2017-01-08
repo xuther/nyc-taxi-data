@@ -1,5 +1,6 @@
 import locale
 import numpy as np
+import matplotlib.pyplot as plt
 
 InFile = "./061-010100.csv"
 
@@ -33,7 +34,8 @@ for i in range(len(data)):
 
 polynomials = []
 #sort the array
-for i in range(len(data_by_days)):
+#for i in range(len(data_by_days)):
+for i in range(1):
     data_by_days[i] = sorted(data_by_days[i], key=lambda x: x[0])
     x = []
     y = []
@@ -46,6 +48,12 @@ for i in range(len(data_by_days)):
     z = np.polyfit(x,y,5)
     polynomials.append(z)
 
-    print z
+    p = np.poly1d(z)
 
-    
+    xp = np.linspace(0, 100, 600)
+    out = plt.plot(x, y, '.', xp, p(xp), '-')
+
+    plt.ylim(0, 500)
+
+    plt.show()
+    #graph with pyplot
