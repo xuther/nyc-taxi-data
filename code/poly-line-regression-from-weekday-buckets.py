@@ -1,7 +1,9 @@
 import locale
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
+Tract = "061-010100"
 InFile = "./061-010100.csv"
 
 data = []
@@ -33,9 +35,20 @@ for i in range(len(data)):
     data_by_days[data[i][0]].append([data[i][3],data[i][2]])
 
 polynomials = []
+
 #sort the array
-#for i in range(len(data_by_days)):
-for i in range(1):
+
+labels = {0: "Monday",
+1: "Tuesday",
+2: "Wednesday",
+3: "Thursday",
+4: "Friday",
+5: "Saturday",
+6: "Sunday"}
+
+
+for i in range(len(data_by_days)):
+#for i in range(1):
     data_by_days[i] = sorted(data_by_days[i], key=lambda x: x[0])
     x = []
     y = []
@@ -51,9 +64,12 @@ for i in range(1):
     p = np.poly1d(z)
 
     xp = np.linspace(0, 100, 600)
-    out = plt.plot(x, y, '.', xp, p(xp), '-')
+    _ = plt.plot(xp, p(xp), '-', label=labels[i])
 
-    plt.ylim(0, 500)
+    plt.ylim(0, 1000)
 
-    plt.show()
+plt.legend(loc='upper left')
+fig = matplotlib.pyplot.gcf()
+fig.set_size_inches(18.5, 10.5, forward=True)
+fig.savefig('../' + Tract +'-combined.png')
     #graph with pyplot
