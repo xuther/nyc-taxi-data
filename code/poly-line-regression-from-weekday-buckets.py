@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import csv
 import locale
 import numpy as np
 import matplotlib
@@ -11,7 +12,11 @@ warnings.simplefilter('ignore', np.RankWarning)
 
 Tract = "061-010100"
 InDir = "./"
-InFile = "./061-010100.csv"
+InFile = "./061-016700.csv"
+
+#Open the out-CSV file for writing.
+outCSV = open('./csv-out/lines-of-fit.csv', 'w+')
+csvWriter = csv.writer(outCSV)
 
 for file in os.listdir(InDir):
 #for i in range(1):
@@ -25,6 +30,7 @@ for file in os.listdir(InDir):
 
     print file
     Tract = file.split(".")[0]
+    #Tract = file.split(".")[1]
 
     data = []
 
@@ -73,6 +79,8 @@ for file in os.listdir(InDir):
 
     import matplotlib.pyplot as plt
 
+
+
     for i in range(len(data_by_days)):
     #for i in range(1):
         data_by_days[i] = sorted(data_by_days[i], key=lambda x: x[0])
@@ -96,24 +104,50 @@ for file in os.listdir(InDir):
         #Bring it back to a 1d array.
         y = y.flatten()
 
-        #Z are the coefficients to our polynomial - residual is our SSE
-        z, residual, _, _, _ = np.polyfit(x,y,5, full=True)
-        print residual
+        polyCount = 1
+        bestResid = 1000000
+        bestPoly = []
+        decreasing = True
 
+        # try at least the first five polynomial cuves - then continue until we get a decrease in SSE
+        while polyCount <= 5 or decreasing:
+            #print "calculatingFit"
+            z, residual, _, _, _ = np.polyfit(x,y,polyCount, full=True)
 
+            if residual < bestResid:
+                bestResid = residual
+                bestPoly = z
+                decreasing = True
+                #print "Better residual found."
+            else:
+                decreasing = False
 
-        polynomials.append(z)
+            polyCount += 1
 
-        p = np.poly1d(z)
+        print "Using " + str(len(bestPoly)) + " residuals.\nTried " + str(polyCount) + "."
+
+        print Tract
+        #Output the coefficients into the csv file.
+        #csvWriter.writerow([Tract, i, bestPoly, bestResid])
+
+        p = np.poly1d(bestPoly)
+        print bestPoly
+
+        alpha = 1
+
+        if i < 4:
+            alpha = .2
 
         xp = np.linspace(0, 100, 600)
-        _ = plt.plot(xp, p(xp), '-', label=labels[i])
+        _ = plt.plot(x, y, '.', xp, p(xp), '-', label=labels[i], alpha=alpha)
 
-        plt.ylim(-.25, 1.5)
-
+    plt.ylim(-.25, 1.5)
     plt.legend(loc='upper left')
     fig = matplotlib.pyplot.gcf()
     fig.set_size_inches(18.5, 10.5, forward=True)
     fig.savefig('./out-figures/' + Tract +'-combined.png')
     fig.clf()
-        #graph with pyplot
+    #graph with pyplot
+
+#close the out-csv file.
+outCSV.close()
