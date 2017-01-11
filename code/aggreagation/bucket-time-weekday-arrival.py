@@ -12,7 +12,7 @@ sc = SparkContext(conf = conf)
 
 #test = sc.textFile("/home/sir/Neighborhoods/Data/Test/test_bucket_times.csv")
 test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2016-out/1-yellow-out.csv")
-outputDir = "/home/sir/Neighborhoods/Data/Test/Buckets-out/"
+outputDir = "/home/sir/Neighborhoods/Data/Test/Buckets-Out-Arrival/2016-1/"
 
 
 Header = test.filter(lambda l: "tpep_pickup" in l)
