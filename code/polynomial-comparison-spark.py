@@ -2,6 +2,7 @@
 
 import numpy as np
 import json
+import csv
 from pyspark import SparkConf, SparkContext
 
 conf = (SparkConf()
@@ -12,6 +13,7 @@ conf = (SparkConf()
 
 sc = SparkContext(conf = conf)
 file1 = '/home/sir/Neighborhoods/Data/Test/Weekday-15min-Arrival-Buckets/csv-out/lines-of-fit.json'
+outfile1 = '/home/sir/Neighborhoods/Data/Test/Weekday-15min-Arrival-Buckets/csv-out/ranked-differences.csv'
 
 data1 = json.loads(open(file1).read())[1:]
 
@@ -46,6 +48,11 @@ weekdayGrouping = weekdayGrouping.reduceByKey(lambda x, y: x+y)
 differences = weekdayGrouping.map(lambda x: calcDifferences(x[1]))
 
 sortedDifferences = differences.map(lambda x: sorted(x, key=lambda y: y[2]))
-
 mixedDifferences = sorted(sortedDifferences.flatMap(lambda x: x).collect())
-#now we need to do a merge sort on sorted differences
+
+#print out to a file
+with open(outfile1) as f:
+    writer = csv.writer(f)
+    writer.writerow(["tract-weekday-1", "tract-weekday-1", "squared-difference"])
+    for record in mixedDifferences
+        writer.writerow(record)
