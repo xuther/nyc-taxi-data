@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+
+import sys
 import json
 import locale
 import numpy as np
@@ -22,7 +24,7 @@ GeneratePlot = True
 if (len(sys.argv) > 2):
     if sys.argv[2] == "n":
         GeneratePlot = False
-    else
+    else:
         GeneratePlot = True
 
 toSave = []
@@ -46,7 +48,7 @@ for file in os.listdir(InDir):
 
     data = []
 
-    with open(file) as f:
+    with open(InDir + file) as f:
         headers = f.readline()
 
         line = f.readline()
@@ -162,5 +164,5 @@ for file in os.listdir(InDir):
         #graph with pyplot
 
 #close the out-csv file.
-with open('./csv-out/lines-of-fit.json', 'w+') as outfile:
+with open(InDir + 'csv-out/lines-of-fit.json', 'w+') as outfile:
     json.dump(toSave, outfile)

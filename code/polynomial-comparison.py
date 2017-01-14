@@ -3,6 +3,7 @@
 import numpy as np
 import sys
 import csv
+import json
 
 print len(sys.argv)
 
@@ -23,6 +24,7 @@ def comparePolys(poly1, poly2, r):
     diff = 0
     for i in range(r):
         diff += np.square(a(i) - b(i))
+    print diff
     return diff
 
 def calcDifferences(data):
@@ -30,5 +32,10 @@ def calcDifferences(data):
     for i in range(len(data)):
         for j in range(i+1, len(data)):
             diff = comparePolys(data[i][2], data[j][2], 96)
-            differences.append([str(data[j][0])+"-"+str(data[j][1]), strdata[i][0]+'-'+data[i][1], diff])
+            differences.append([str(data[j][0])+"-"+str(data[j][1]), str(data[i][0])+'-'+str(data[i][1]), diff])
     return differences
+
+differences = calcDifferences(data1)
+
+
+print differences
