@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import csv
+import json
 import locale
 import numpy as np
 import matplotlib
@@ -14,9 +14,11 @@ Tract = "061-010100"
 InDir = "./"
 InFile = "./061-016700.csv"
 
-#Open the out-CSV file for writing.
-outCSV = open('./csv-out/lines-of-fit.csv', 'w+')
-csvWriter = csv.writer(outCSV)
+
+toSave = []
+
+d = ["tract-num","weekday","polynomial","error"]
+toSave.append(d)
 
 for file in os.listdir(InDir):
 #for i in range(1):
@@ -79,12 +81,11 @@ for file in os.listdir(InDir):
 
     import matplotlib.pyplot as plt
 
-
-
     for i in range(len(data_by_days)):
     #for i in range(1):
         data_by_days[i] = sorted(data_by_days[i], key=lambda x: x[0])
-        if len(data_by_days[i]) < 1:
+        if len(data_by_days[i]) < 30:
+            #Just Connect the dots and move on
             continue
 
         x = []
@@ -124,14 +125,15 @@ for file in os.listdir(InDir):
 
             polyCount += 1
 
-        print "Using " + str(len(bestPoly)) + " residuals.\nTried " + str(polyCount) + "."
+        #print "Using " + str(len(bestPoly)) + " residuals.\nTried " + str(polyCount) + "."
 
-        print Tract
+        #print Tract
         #Output the coefficients into the csv file.
-        #csvWriter.writerow([Tract, i, bestPoly, bestResid])
+        val = [Tract, i, bestPoly.tolist(), bestResid.tolist()]
+        toSave.append(val)
 
         p = np.poly1d(bestPoly)
-        print bestPoly
+        #print bestPoly
 
         alpha = 1
 
@@ -150,4 +152,5 @@ for file in os.listdir(InDir):
     #graph with pyplot
 
 #close the out-csv file.
-outCSV.close()
+with open('./csv-out/lines-of-fit.json', 'w+') as outfile:
+    json.dump(toSave, outfile)
