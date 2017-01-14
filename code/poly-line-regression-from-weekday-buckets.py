@@ -10,10 +10,20 @@ from sklearn import preprocessing
 
 warnings.simplefilter('ignore', np.RankWarning)
 
-Tract = "061-010100"
-InDir = "./"
-InFile = "./061-016700.csv"
 
+InDir = ""
+
+if (len(sys.argv) > 1):
+    InDir = sys.argv[1]
+else:
+    InDir = "./"
+
+GeneratePlot = True
+if (len(sys.argv) > 2):
+    if sys.argv[2] == "n":
+        GeneratePlot = False
+    else
+        GeneratePlot = True
 
 toSave = []
 
@@ -131,25 +141,25 @@ for file in os.listdir(InDir):
         #Output the coefficients into the csv file.
         val = [Tract, i, bestPoly.tolist(), bestResid.tolist()]
         toSave.append(val)
+        if (GeneratePlot):
+            p = np.poly1d(bestPoly)
+            #print bestPoly
 
-        p = np.poly1d(bestPoly)
-        #print bestPoly
+            alpha = 1
 
-        alpha = 1
+            if i < 4:
+                alpha = .2
 
-        if i < 4:
-            alpha = .2
-
-        xp = np.linspace(0, 100, 600)
-        _ = plt.plot(x, y, '.', xp, p(xp), '-', label=labels[i], alpha=alpha)
-
-    plt.ylim(-.25, 1.5)
-    plt.legend(loc='upper left')
-    fig = matplotlib.pyplot.gcf()
-    fig.set_size_inches(18.5, 10.5, forward=True)
-    fig.savefig('./out-figures/' + Tract +'-combined.png')
-    fig.clf()
-    #graph with pyplot
+            xp = np.linspace(0, 100, 600)
+            _ = plt.plot(x, y, '.', xp, p(xp), '-', label=labels[i], alpha=alpha)
+    if (GeneratePlot):
+        plt.ylim(-.25, 1.5)
+        plt.legend(loc='upper left')
+        fig = matplotlib.pyplot.gcf()
+        fig.set_size_inches(18.5, 10.5, forward=True)
+        fig.savefig('./out-figures/' + Tract +'-combined.png')
+        fig.clf()
+        #graph with pyplot
 
 #close the out-csv file.
 with open('./csv-out/lines-of-fit.json', 'w+') as outfile:
