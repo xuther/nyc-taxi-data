@@ -1,16 +1,21 @@
 #!/usr/bin/python
 
 import numpy as np
-import sys
-import csv
 import json
+from pyspark import SparkConf, SparkContext
 
-print len(sys.argv)
+conf = (SparkConf()
+        .setMaster("local[*]")
+        .setAppName("My app")
+        .set("spark.executor.memory", "8g")
+        .set("spark.executor.cores", "8"))
 
-#Get the two files containing the polynomials to compare arguments
-file1 = sys.argv[1]
+sc = SparkContext(conf = conf)
+file1 = '/home/sir/Neighborhoods/Data/Test/Weekday-15min-Arrival-Buckets/csv-out/lines-of-fit.json'
 
 data1 = json.loads(open(file1).read())[1:]
+
+data = sc.parallelize(data1)
 
 #Compare each poly, point by point, from 0 to range. Basically we we just take
 #the difference calculated at each point, and add them up, that will give us the 'distance'
@@ -24,7 +29,6 @@ def comparePolys(poly1, poly2, r):
     diff = 0
     for i in range(r):
         diff += np.square(a(i) - b(i))
-    print diff
     return diff
 
 def calcDifferences(data):
@@ -35,7 +39,13 @@ def calcDifferences(data):
             differences.append([str(data[j][0])+"-"+str(data[j][1]), str(data[i][0])+'-'+str(data[i][1]), diff])
     return differences
 
-differences = calcDifferences(data1)
 
+weekdayGrouping = data.map(lambda x: (x[1], [x]))
+weekdayGrouping = weekdayGrouping.reduceByKey(lambda x, y: x+y)
 
-print differences
+differences = weekdayGrouping.map(lambda x: calcDifferences(x[1]))
+
+sortedDifferences = differences.map(lambda x: sorted(x, key=lambda y: y[2]))
+
+mixedDifferences = sorted(sortedDifferences.flatMap(lambda x: x).collect())
+#now we need to do a merge sort on sorted differences
