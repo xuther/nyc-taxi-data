@@ -54,5 +54,5 @@ mixedDifferences = sorted(sortedDifferences.flatMap(lambda x: x).collect())
 with open(outfile1) as f:
     writer = csv.writer(f)
     writer.writerow(["tract-weekday-1", "tract-weekday-1", "squared-difference"])
-    for record in mixedDifferences
+    for record in mixedDifferences:
         writer.writerow(record)
