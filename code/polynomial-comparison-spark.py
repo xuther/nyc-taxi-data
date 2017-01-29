@@ -48,10 +48,10 @@ weekdayGrouping = weekdayGrouping.reduceByKey(lambda x, y: x+y)
 differences = weekdayGrouping.map(lambda x: calcDifferences(x[1]))
 
 sortedDifferences = differences.map(lambda x: sorted(x, key=lambda y: y[2]))
-mixedDifferences = sorted(sortedDifferences.flatMap(lambda x: x).collect())
+mixedDifferences = sorted(sortedDifferences.flatMap(lambda x: x).collect(), key=lambda y: y[2])
 
 #print out to a file
-with open(outfile1) as f:
+with open(outfile1, 'w+') as f:
     writer = csv.writer(f)
     writer.writerow(["tract-weekday-1", "tract-weekday-1", "squared-difference"])
     for record in mixedDifferences:
