@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
-import csv
+
+import sys
+import json
 import locale
 import numpy as np
 import matplotlib
@@ -10,13 +12,23 @@ from sklearn import preprocessing
 
 warnings.simplefilter('ignore', np.RankWarning)
 
-Tract = "061-010100"
-InDir = "./"
-InFile = "./061-016700.csv"
 
-#Open the out-CSV file for writing.
-outCSV = open('./csv-out/lines-of-fit.csv', 'w+')
-csvWriter = csv.writer(outCSV)
+def printUsage():
+    print "Usage: poly-line-regression-from-weekday-directed.py <In Directory> <Out-File> <County-Tract> <Weekday>"
+    print "If weekday is not provided, all days will be plotted."
+
+InDir = ""
+
+#In Directory
+if (len(sys.argv) > 1):
+    InDir = sys.argv[1]
+else
+    printUsage()
+
+toSave = []
+
+d = ["tract-num","weekday","polynomial","error"]
+toSave.append(d)
 
 for file in os.listdir(InDir):
 #for i in range(1):
@@ -34,7 +46,7 @@ for file in os.listdir(InDir):
 
     data = []
 
-    with open(file) as f:
+    with open(InDir + file) as f:
         headers = f.readline()
 
         line = f.readline()
@@ -79,12 +91,11 @@ for file in os.listdir(InDir):
 
     import matplotlib.pyplot as plt
 
-
-
     for i in range(len(data_by_days)):
     #for i in range(1):
         data_by_days[i] = sorted(data_by_days[i], key=lambda x: x[0])
-        if len(data_by_days[i]) < 1:
+        if len(data_by_days[i]) < 30:
+            #Just Connect the dots and move on
             continue
 
         x = []
@@ -124,30 +135,32 @@ for file in os.listdir(InDir):
 
             polyCount += 1
 
-        print "Using " + str(len(bestPoly)) + " residuals.\nTried " + str(polyCount) + "."
+        #print "Using " + str(len(bestPoly)) + " residuals.\nTried " + str(polyCount) + "."
 
-        print Tract
+        #print Tract
         #Output the coefficients into the csv file.
-        #csvWriter.writerow([Tract, i, bestPoly, bestResid])
+        val = [Tract, i, bestPoly.tolist(), bestResid.tolist()]
+        toSave.append(val)
+        if (GeneratePlot):
+            p = np.poly1d(bestPoly)
+            #print bestPoly
 
-        p = np.poly1d(bestPoly)
-        print bestPoly
+            alpha = 1
 
-        alpha = 1
+            if i < 4:
+                alpha = .2
 
-        if i < 4:
-            alpha = .2
-
-        xp = np.linspace(0, 100, 600)
-        _ = plt.plot(x, y, '.', xp, p(xp), '-', label=labels[i], alpha=alpha)
-
-    plt.ylim(-.25, 1.5)
-    plt.legend(loc='upper left')
-    fig = matplotlib.pyplot.gcf()
-    fig.set_size_inches(18.5, 10.5, forward=True)
-    fig.savefig('./out-figures/' + Tract +'-combined.png')
-    fig.clf()
-    #graph with pyplot
+            xp = np.linspace(0, 100, 600)
+            _ = plt.plot(x, y, '.', xp, p(xp), '-', label=labels[i], alpha=alpha)
+    if (GeneratePlot):
+        plt.ylim(-.25, 1.5)
+        plt.legend(loc='upper left')
+        fig = matplotlib.pyplot.gcf()
+        fig.set_size_inches(18.5, 10.5, forward=True)
+        fig.savefig('./out-figures/' + Tract +'-combined.png')
+        fig.clf()
+        #graph with pyplot
 
 #close the out-csv file.
-outCSV.close()
+with open(InDir + 'csv-out/lines-of-fit.json', 'w+') as outfile:
+    json.dump(toSave, outfile)
