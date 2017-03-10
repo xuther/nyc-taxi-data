@@ -4,7 +4,8 @@ import json
 
 jsonin = './tl_2010_36061_tract10.geojson'
 jsonout = './jsonout.geojson'
-results = './Combined_Results.csv'
+results = './final-clusters.csv'
+# results = "./Combined_Results.csv"
 
 clusterAssignments = {}
 
@@ -14,10 +15,11 @@ for line in open(results):
     line = line.strip()
     vals = line.split(",")
     for val in vals:
-        clusterAssignments[val] = i 
+        clusterAssignments[val.strip()] = i 
     i += 1
-
+print(clusterAssignments)
 data = []
+
 with open(jsonin) as js:
     data = json.load(js)
 

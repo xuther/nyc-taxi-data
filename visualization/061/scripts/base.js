@@ -17,7 +17,7 @@ L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_tok
 		geojson = JSON.parse(resp)
 		L.geoJSON(geojson, 
 			{
-				"opacity": 0.5,
+				"opacity": 0.9,
 				onEachFeature: labelEachFeature,
 				style: function (feature) 
 				{
