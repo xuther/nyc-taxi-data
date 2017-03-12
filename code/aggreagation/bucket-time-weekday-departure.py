@@ -11,8 +11,8 @@ conf = (SparkConf()
 sc = SparkContext(conf = conf)
 
 #test = sc.textFile("/home/sir/Neighborhoods/Data/Test/test_bucket_times.csv")
-test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2016-out/1-yellow-out.csv")
-outputDir = "/home/sir/Neighborhoods/Data/Test/Buckets-out/"
+test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2015/all-processed.csv")
+outputDir = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures/"
 
 
 Header = test.filter(lambda l: "tpep_pickup" in l)

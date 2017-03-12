@@ -11,8 +11,8 @@ conf = (SparkConf()
 sc = SparkContext(conf = conf)
 
 #test = sc.textFile("/home/sir/Neighborhoods/Data/Test/test_bucket_times.csv")
-test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2016-out/1-yellow-out.csv")
-outputDir = "/home/sir/Neighborhoods/Data/Test/Buckets-Out-Arrival/2016-1/"
+test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2015/all-processed.csv")
+outputDir = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals/"
 
 
 Header = test.filter(lambda l: "tpep_pickup" in l)
@@ -37,7 +37,7 @@ def BucketTime(x):
 array2 = array1.map(lambda x: BucketTime(x))
 #map to county + Tract + block + day of week + hour + minute (Bucket))
 #array3 = array2.map(lambda x: (x[6]+":"+x[7]+":"+x[8]+"-"+str(x[12])+":"+str(x[0].hour)+":"+str(x[0].minute), 1))
-array3 = array2.map(lambda x: (x[6]+":"+x[7]+"-"+str(x[12])+":"+str(x[1].hour)+":"+str(x[1].minute), 1))
+array3 = array2.map(lambda x: (x[9]+":"+x[10]+"-"+str(x[12])+":"+str(x[1].hour)+":"+str(x[1].minute), 1))
 #
 #count
 step4 = array3.reduceByKey( lambda a,b: a+b)

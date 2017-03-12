@@ -8,9 +8,9 @@ conf = (SparkConf()
         .set("spark.executor.cores", "8"))
 
 sc = SparkContext(conf = conf)
-inFile1 = '/home/sir/Neighborhoods/Data/Test/Buckets-Out-Arrival/2016-1/csv-out/out-difference-combined.csv'
-inFile2 = '/home/sir/Neighborhoods/Data/Test/Weekday-15min-Arrival-Buckets/csv-out/ranked-differences-combined.csv'
-outfile1 = '/home/sir/Neighborhoods/Data/poly-line-compare/combined-diff-jan-2016.csv'
+inFile1 = '/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures/csv-out/ranked-differences-combined.csv'
+inFile2 = '/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals/csv-out/ranked-differences-combined.csv'
+outfile1 = '/home/sir/Neighborhoods/Data/Test/2015-aggregated/aggregated-polynomial-based-differences.csv'
 
 data1 = sc.textFile(inFile1)
 data2 = sc.textFile(inFile2)

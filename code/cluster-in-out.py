@@ -37,7 +37,7 @@ with open(arrival_file) as csvfile2:
 sorted_list = sorted(combined.items(), key=operator.itemgetter(1))
 for tup in sorted_list:
 	tracts = tup[0].split("#")
-	if tup[1] != "squared-difference" and float(tup[1]) > 20:
+	if tup[1] != "squared-difference" and float(tup[1]) > 60:
 		tolarge[tup[0]] = tup[1]
 	elif tracts[0] in used:
 		if tracts[1] not in used:
@@ -55,7 +55,7 @@ for tup in sorted_list:
 		used[tracts[1]] = tracts[0]
 
 final_list = sorted(cluster_hash.items(), key=operator.itemgetter(1))
-with open(out_file, 'w', newline='') as csvfile:
+with open(out_file, 'w+', newline='') as csvfile:
 	writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 	for tup in final_list:
 		line = []
