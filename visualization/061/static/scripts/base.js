@@ -4,6 +4,15 @@ var colors;
 var curLayer;
 var levels;
 
+
+var hoverStyle = {
+	color: '#ff0000',
+	weight: 3,
+	opacity: 0.9,
+	fillOpacity: 0.8,
+	fillColor: '#ff0000'
+};
+
 $(document).ready(function() {
 mymap = L.map('mapid').setView([40.76, -73.97], 12);
 
@@ -35,8 +44,52 @@ L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_tok
 	});
 });
 
+function clusterHovered(cluster) {
+	if (cluster == -1) {
+		return;
+	}
+
+	mymap.eachLayer(function(layer) {
+		if (layer.feature !== undefined && layer.feature.properties.cluster == cluster) {
+			layer.setStyle(hoverStyle);
+		}
+	});
+}
+
+function getColor(feature) {
+	if (feature.properties.cluster === -1)  {
+			return {color: "#" + colors.undefined, fillColor: "#" + colors.undefined};
+		} else {
+			return {color: "#" + colors.colors[feature.properties.cluster], 
+				fillColor: "#" + colors.colors[feature.properties.cluster],
+				fillOpacity: .2,
+				weight: 3
+			}
+		}
+}
+
+function unclusterHovered(cluster) {
+		if (cluster == -1) {
+			return;
+		}
+
+	mymap.eachLayer(function(layer) {
+		if (layer.feature !== undefined && layer.feature.properties.cluster == cluster) {
+			layer.setStyle(getColor(layer.feature));
+		}
+	});
+}
+
 function labelEachFeature(feature, layer) {
 	if (feature.properties) {
+
+		layer.on("mouseover", function(e) {
+			clusterHovered(feature.properties.cluster);
+		});
+		layer.on("mouseout", function(e) {
+			unclusterHovered(feature.properties.cluster);
+		});
+
 		layer.bindPopup(feature.properties.COUNTYFP10 +"-"+ feature.properties.TRACTCE10 + " Cluster: " + feature.properties.cluster);
 	}
 	//var label = L.marker(layer.getBounds().getCenter(), {
@@ -91,6 +144,10 @@ function getNewValue() {
    $.get('/count/' + $('#test').val()).then(function(resp) {
 		$('#clusterCount').html(resp + " clusters at this level");
    });
+}
+
+function layerClicked() {
+
 }
 
 function replace(level) {
