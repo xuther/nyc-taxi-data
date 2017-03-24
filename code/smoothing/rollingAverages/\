@@ -1,0 +1,28 @@
+#!/usr/bin/python
+
+import pandas as pd
+import csv
+
+values = []
+
+with open("./testData.txt", 'r') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        values.append(row)
+
+print values
+
+df = pd.DataFrame.from_records(values)
+
+print df
+
+print df[1]
+print df[0]
+ 
+s = pd.Series(df[1].values, index=df[0].values)
+
+print s
+
+r = s.rolling(window=3, center=True).mean()
+print r 
+print r.mean()

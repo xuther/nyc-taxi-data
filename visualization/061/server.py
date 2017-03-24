@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import web
 import json
 from os import listdir
