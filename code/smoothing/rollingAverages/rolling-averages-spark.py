@@ -34,7 +34,7 @@ def appendTractToEachPoint(x):
 def runRolling(x):
     df = pd.DataFrame.from_records(x)
     s = pd.Series(df[1].values, index=df[0].values)
-    s = s/s.max() #Normalize
+    #s = s/s.max() #Normalize
     r = s.rolling(window=3, center=True, win_type='boxcar').mean()
     return zip(r.index, r)
 
