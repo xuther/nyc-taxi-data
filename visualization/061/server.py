@@ -4,9 +4,9 @@ import json
 from os import listdir
 import addclusterdata
 
-urls = ('/json/(.*)', 'get_json',
-        '/count/(.*)', 'getNumberOfClustersAtSize',
-        '/levels', 'getLevels')
+urls = ('/json/(.*)/(.*)', 'get_json',
+        '/count/(.*)/(.*)', 'getNumberOfClustersAtSize',
+        '/levels/(.*)', 'getLevels')
 
 app = web.application(urls, globals())
 
@@ -20,8 +20,10 @@ def getClusterCount(f):
                 count +=1 
     return count    
 
-def getAllJSON():
-    for f in listdir("./clusters"):
+def getAllJSON(cluster):
+    print "Getting ", cluster
+    del clusterList[:]
+    for f in listdir("./"+ cluster):
         clusterList.append((float(f), f))
     clusterList.sort(key=lambda x: x[0])
     print clusterList
@@ -47,25 +49,28 @@ def getPrev(level):
             prev = j[1]
 
 class getLevels:
-    def GET(self):
+    def GET(self, cluster):
+        getAllJSON(cluster)
         return getClusterIncrements()
 
 class getNumberOfClustersAtSize:
-    def GET(self, value):
+    def GET(self, cluster, value):
+        getAllJSON(cluster)
         f = getNext(float(value))
-        count = getClusterCount("./clusters/" + f)
+        count = getClusterCount("./"+cluster+"/" + f)
         return str(count)
         
 
 class get_json:
-    def GET(self, value):
+    def GET(self, cluster, value):
+       getAllJSON(cluster)
        f = getNext(float(value))
        print f 
-       addclusterdata.insert("./clusters/" + f, "./cur-out.clusterList")
+       addclusterdata.insert("./"+cluster+"/" + f, "./cur-out.clusterList")
        fi = open("./cur-out.clusterList")
        return fi.read()
 
-getAllJSON()
+getAllJSON("2015clusters")
 
 if __name__ == "__main__":
     app.run()

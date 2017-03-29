@@ -11,11 +11,11 @@ conf = (SparkConf()
 sc = SparkContext(conf = conf)
 
 #test = sc.textFile("/home/sir/Neighborhoods/Data/Test/test_bucket_times.csv")
-test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2015/all-processed.csv")
-outputDir = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures/"
+test = sc.textFile("/home/sir/Neighborhoods/Data/Taxi/2014/all-processed.csv")
+outputDir = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/departures/"
 
 
-Header = test.filter(lambda l: "tpep_pickup" in l)
+Header = test.filter(lambda l: "pickup" in l)
 pruned = test.subtract(Header)
 array = pruned.map( lambda x : x.split(',') )
 

@@ -3,6 +3,12 @@ var mymap;
 var colors; 
 var curLayer;
 var levels;
+var clustering = '2015clusters';
+
+var clusterOptions = [
+	'2015clusters',
+	'2014clusters'
+]
 
 
 var hoverStyle = {
@@ -14,6 +20,13 @@ var hoverStyle = {
 };
 
 $(document).ready(function() {
+
+$.each(clusterOptions, function(key, value) {
+	$('#clusteringOptions')
+		.append($("<option></option>")
+				.attr("value", value)
+				.text(value));
+	});
 mymap = L.map('mapid').setView([40.76, -73.97], 12);
 
 L.tileLayer('https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoieHV0aGVyIiwiYSI6ImNpenEzY3o3azAwemQyd255bG5oYjdjeTMifQ.WsMX8VNOdpiU1d-DgCgLXA', {
@@ -105,7 +118,7 @@ function long2tile(lon,zoom) {return (Math.floor((lon+180)/360*Math.pow(2,zoom))
 function lat2tile(lat,zoom) { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
 
 function getGEOJson() {
-	$.get('/levels').then(function(resp) {
+	$.get('/levels/' + clustering).then(function(resp) {
 		levels = JSON.parse(resp);
 	});
 	return $.get('jsonout.geojson')
@@ -136,18 +149,22 @@ function getcolors() {
 }
 
 function getLevel(level) {
-	return $.get('/json/'+ level)
+	return $.get('/json/'+clustering + "/"+ level)
 }
 
 function getNewValue() {
    replace($('#test').val())
-   $.get('/count/' + $('#test').val()).then(function(resp) {
+   $.get('/count/' + clustering + '/' + $('#test').val()).then(function(resp) {
 		$('#clusterCount').html(resp + " clusters at this level");
    });
 }
 
 function layerClicked() {
 
+}
+
+function selectClustering(value) {
+	clustering = value;
 }
 
 function replace(level) {

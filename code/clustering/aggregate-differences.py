@@ -10,8 +10,8 @@ conf = (SparkConf()
         .set("spark.executor.cores", "8"))
 
 sc = SparkContext(conf = conf)
-file1 = '/home/sir/Neighborhoods/Data/Test/Buckets-Out-Arrival/2016-1/csv-out/out-difference.csv'
-outfile1 = '/home/sir/Neighborhoods/Data/Test/Buckets-Out-Arrival/2016-1/csv-out/out-difference-combined.csv'
+file1 = '/home/sir/Neighborhoods/Data/Test/2014-aggregated/departures/csv-out/ranked-differences.csv'
+outfile1 = '/home/sir/Neighborhoods/Data/Test/2014-aggregated/departures/csv-out/aggregated-differences.csv'
 
 data = sc.textFile(file1)
 header = data.first()

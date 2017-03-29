@@ -57,10 +57,12 @@ def recalculateDifferences(a,b):
             continue
         else:
             print 'error, key ' + str(key) + ' not found for distance from cluster ' + str(b)
+
     clusterDistances.pop(b)
-    sortedDistances.remove(clusterDistances[a][b])
-    sortedDistances.sort(key=lambda x: x.distance) #Resort the sorted distances 
-    clusterDistances[a].pop(b)
+    if b in clusterDistances[a]:
+        sortedDistances.remove(clusterDistances[a][b])
+        sortedDistances.sort(key=lambda x: x.distance) #Resort the sorted distances 
+        clusterDistances[a].pop(b)
 
 
 def combineClusters(a, b):
@@ -72,6 +74,7 @@ def combineClusters(a, b):
 
 def setup():
     #Setup
+    print in_file
     with open(in_file) as f: 
         for line in csv.reader(f):
             #check to see if we've read in either of the tracts before, if not, add them to ther own cluster.
@@ -84,18 +87,31 @@ def setup():
 setup() #setup 
 saveClusters(clusters.copy(), 0)
 
+lastLen = -1
 while len(clusters) > 1:
     curCombine = sortedDistances[0]
+    print curCombine
     if curCombine.a <= curCombine.b:
         combineClusters(curCombine.a, curCombine.b)
     else:
         combineClusters(curCombine.b, curCombine.a)
     saveClusters(clusters.copy(),curCombine.distance)
+    if curCombine.a == 251 or curCombine.b == 251:
+        print "251 HERE!!!!"
+    if lastLen == curCombine.distance:
+        print curCombine
+        print clusters
+        print lastLen
+        break
+    else:
+        lastLen = curCombine.distance
 
-with open(out_file, "w+") as f:
-    i = 0
-    for c in combinations:
-        toWrite =""
-        f.write(str(c[1]) + " | " + str(c[0]) + "\n") 
-        print str(i) + "," + str(c[1])
+i = 0
+for c in combinations:
+    with open(out_file+str(c[1]), "w+") as f:
+        for x in c[0]:
+            toWrite =""
+            for y in c[0][x]:
+                toWrite += y + ","
+            f.write(toWrite[:-1] + "\n")
         i +=1 
