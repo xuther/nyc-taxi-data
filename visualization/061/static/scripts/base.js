@@ -8,7 +8,8 @@ var clustering = '2015clusters';
 var clusterOptions = [
 	'2015clusters',
 	'2014clusters',
-    'kmeansclusters'
+    '2015kmeansclusters',
+    '2014kmeansclusters'
 ]
 
 
@@ -160,12 +161,10 @@ function getNewValue() {
    });
 }
 
-function layerClicked() {
-
-}
 
 function selectClustering(value) {
 	clustering = value;
+    getGEOJson()
 }
 
 function replace(level) {
