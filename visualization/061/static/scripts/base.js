@@ -7,7 +7,8 @@ var clustering = '2015clusters';
 
 var clusterOptions = [
 	'2015clusters',
-	'2014clusters'
+	'2014clusters',
+    'kmeansclusters'
 ]
 
 

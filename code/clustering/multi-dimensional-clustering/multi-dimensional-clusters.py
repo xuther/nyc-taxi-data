@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import numpy as np
 from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
@@ -6,10 +7,12 @@ import csv
 
 InFile = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/points.csv"
 Labels ="/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/indicies.csv"
+OutDir = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/"
 
 matrix = np.loadtxt(open(InFile, "rv"), delimiter = ",")
 
 IndexLabels = []
+
 with open(Labels) as f: 
     reader = csv.reader(f)
     for line in reader:
@@ -18,18 +21,24 @@ with open(Labels) as f:
 for i in range(len(matrix)):
     matrix[i] = matrix[i] / matrix[i].max()
 
+def clusterAndSave(clusterCount):
+    km = KMeans(n_clusters = clusterCount, max_iter = 10000, n_jobs = -1).fit(matrix)
 
-db = DBSCAN(min_samples=10, metric="manhattan").fit(matrix)
-labels = db.labels_
+    km_labels = km.labels_
 
-cluster_count = len(set(labels)) - (1 if -1 in labels else 0)
+    labeledTracts = []
+    clusters = {}
+    for i in range(len(IndexLabels)):
+        labeledTracts.append((IndexLabels[i][1], km_labels[i]))
+        if km_labels[i] not in clusters:
+            clusters[km_labels[i]] = [IndexLabels[i][1]]
+        else:
+            clusters[km_labels[i]].append(IndexLabels[i][1]) 
 
-km = KMeans(n_jobs = -1).fit(matrix)
+    with open(OutDir + str(clusterCount), "w+") as f:
+        writer = csv.writer(f)
+        for k in clusters:
+            writer.writerow(clusters[k])
 
-km_labels = km.labels_
-
-labeledTracts = []
-for i in range(len(IndexLabels)):
-    labeledTracts.append((IndexLabels[i][1], km_labels[i]))
-
-print labeledTracts
+for i in range(2, 50):
+    clusterAndSave(i)

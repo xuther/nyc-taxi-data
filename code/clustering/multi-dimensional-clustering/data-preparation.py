@@ -13,8 +13,10 @@ conf = (SparkConf()
 
 sc = SparkContext(conf = conf)
 
-InDirDepart = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures"
-InDirArrive = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals"
+#InDirDepart = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures"
+InDirDepart = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures/061-*"
+#InDirArrive = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals"
+InDirArrive = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals/061-*"
 OutFile = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/"
 
 departures = sc.wholeTextFiles(InDirDepart)
@@ -49,6 +51,7 @@ pointedArrivals = splitArrivals.map(lambda x: (x[0], labelPointsWithTractAndArri
 combined = sc.union([pointedDepartures, pointedArrivals])
 
 combined = combined.reduceByKey(lambda x, y: x + y)
+
 combined = combined.map(lambda x: (x[0], sorted(x[1], key = lambda y: y[0])))
 
 collected = combined.collect()
