@@ -35,7 +35,7 @@ def clusterAndSave(clusterCount):
         else:
             clusters[km_labels[i]].append(IndexLabels[i][1]) 
 
-    with open(OutDir + str(clusterCount), "w+") as f:
+    with open(OutDir +"/clusters/" + str(clusterCount), "w+") as f:
         writer = csv.writer(f)
         for k in clusters:
             writer.writerow(clusters[k])
