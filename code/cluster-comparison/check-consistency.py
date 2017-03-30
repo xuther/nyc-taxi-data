@@ -1,10 +1,11 @@
+#!/usr/bin/python
 from datetime import datetime
 from datetime import timedelta
 import os
 
+dirTwo = "/home/sir/Neighborhoods/visualization/061/kmeansclusters/"
 dirOne = "/home/sir/Neighborhoods/visualization/061/2015clusters/"
-dirTwo = "/home/sir/Neighborhoods/visualization/061/2015clusters/"
-outPercentages = "/home/sir/Neighborhoods/code/cluster-comparison/consistency.csv"
+outPercentages = "/home/sir/Neighborhoods/code/cluster-comparison/comparisons/kmeans-2015-consistency.csv"
 def calcAverage(percentages):
     averageSimilarity = 0.0
     count = 0.0

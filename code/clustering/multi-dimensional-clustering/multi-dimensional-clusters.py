@@ -7,7 +7,7 @@ import csv
 
 InFile = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/points.csv"
 Labels ="/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/indicies.csv"
-OutDir = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/"
+OutDir = "/home/sir/Neighborhoods/visualization/061/2015kmeansclusters/"
 
 matrix = np.loadtxt(open(InFile, "rv"), delimiter = ",")
 
@@ -35,10 +35,10 @@ def clusterAndSave(clusterCount):
         else:
             clusters[km_labels[i]].append(IndexLabels[i][1]) 
 
-    with open(OutDir +"/clusters/" + str(clusterCount), "w+") as f:
+    with open(OutDir + str(clusterCount), "w+") as f:
         writer = csv.writer(f)
         for k in clusters:
             writer.writerow(clusters[k])
 
-for i in range(2, 50):
+for i in range(1, 250):
     clusterAndSave(i)
