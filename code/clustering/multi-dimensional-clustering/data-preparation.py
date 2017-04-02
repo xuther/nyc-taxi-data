@@ -13,11 +13,11 @@ conf = (SparkConf()
 
 sc = SparkContext(conf = conf)
 
-#InDirDepart = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures"
-InDirDepart = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/departures/061-*"
-#InDirArrive = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals"
-InDirArrive = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/arrivals/061-*"
-OutFile = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/"
+#InDirDepart = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/departures"
+InDirDepart = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/departures/061-*"
+#InDirArrive = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/arrivals"
+InDirArrive = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/arrivals/061-*"
+OutFile = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/high-dimensional-clustering/"
 
 departures = sc.wholeTextFiles(InDirDepart)
 arrivals = sc.wholeTextFiles(InDirArrive)

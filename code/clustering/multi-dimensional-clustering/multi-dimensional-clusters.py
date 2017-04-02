@@ -5,9 +5,9 @@ from sklearn.cluster import KMeans
 import json
 import csv
 
-InFile = "/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/points.csv"
-Labels ="/home/sir/Neighborhoods/Data/Test/2015-aggregated/high-dimensional-clustering/indicies.csv"
-OutDir = "/home/sir/Neighborhoods/visualization/061/2015kmeansclusters/"
+InFile = "/home/sir/Neighborhoods/Data/Test/2014-aggregated/high-dimensional-clustering/points.csv"
+Labels ="/home/sir/Neighborhoods/Data/Test/2014-aggregated/high-dimensional-clustering/indicies.csv"
+OutDir = "/home/sir/Neighborhoods/visualization/061/2014kmeansclusters/"
 
 matrix = np.loadtxt(open(InFile, "rv"), delimiter = ",")
 
@@ -22,7 +22,8 @@ for i in range(len(matrix)):
     matrix[i] = matrix[i] / matrix[i].max()
 
 def clusterAndSave(clusterCount):
-    km = KMeans(n_clusters = clusterCount, max_iter = 10000, n_jobs = -1).fit(matrix)
+    print clusterCount
+    km = KMeans(n_clusters = clusterCount, max_iter = 10000 * clusterCount, n_jobs = -1).fit(matrix)
 
     km_labels = km.labels_
 
