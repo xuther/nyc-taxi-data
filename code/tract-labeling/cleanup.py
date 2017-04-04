@@ -2,6 +2,8 @@
 
 import csv  
 import locale
+import numpy as np
+import scipy.stats as stats
 
 infile = '/home/sir/Neighborhoods/Data/Usage/usage-files-by-borough/MN.csv'
 outfile ='/home/sir/Neighborhoods/Data/Usage/out/061-out.csv'
@@ -69,8 +71,50 @@ def convertToPercentages(line):
         pair[1] = float(pair[1])/float(total)
     return line
 
+def sortPercentages(percentages):
+    percentages[1] = sorted(percentages[1], key = lambda x: x[1], reverse = True)
+    return percentages
+
+
 TractUsagePercentages = map(lambda x: convertToPercentages(x), TractUsageTotals.items()) 
+TractUsagePercentages = map(lambda x: sortPercentages(x), TractUsagePercentages)
+TractUsagePercentages = [x for x in TractUsagePercentages if x[0] != 'CT201000']
+TractUsagePercentages.sort(key = lambda x: x[1][0][1], reverse = True)
+
+def getLIneByTract(tract):
+    for line in TractUsagePercentages:
+        if line[0] == tract:
+            return line
 
 print TractUsagePercentages
 
+TractUsageTotalWithBlanks = []
+TractIndexes = []
+
+for item in TractUsageTotals.items():
+    TractIndexes.append(item[0])
+    toAdd = []
+    for i in range(1, 12):
+        strValue = ""
+        if i < 10:
+            strValue = '0' + str(i)
+        else:
+            strValue = str(i)
+        if strValue in item[1]:
+            toAdd.append(item[1][strValue])
+        else:
+            toAdd.append(0)
+    TractUsageTotalWithBlanks.append(toAdd)
+
+#Calculate a chi2 on each and store the difference in an array
+
+differences = []
+
+for i in range(len(TractUsageTotalWithBlanks)):
+    print TractIndexes[i]
+    for j in range(i+1, len(TractUsageTotalWithBlanks)):
+        print '\t', TractIndexes[j]
+        res = stats.chi2_contingency(np.array([TractUsageTotalWithBlanks[i], TractUsageTotalWithBlanks[j]]))
+        toReturn = [res[1], TractIndexes[i], TractIndexes[j]]
+        differences.append(toReturn)
 
