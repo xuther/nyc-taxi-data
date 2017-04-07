@@ -2,11 +2,16 @@
 #
 # Based on the paper Comparing Clusterings, Marina Melia, University of Washington
 # www.stat.washington.edu/mmp/Papers/compare-cold.pdf
-#
+# usage ./variance-of-information.py [options]
+#       -t test - will need to change directory to test files
+#       -f infile - path to a file containing one clustering file per row, The clusterings will be compared amongst themselves
+#       -c compare - provide two paths to files containing clusterings. clusterings in on will be compared to clusterings in the other
+#   Cluster files are expected in one file per clustering, one cluster per row, elements in a cluster comma separated. 
 
 import math
 import sys
 import numpy as np
+import time
 
 elementNames = {}
 clusterings = []
@@ -113,6 +118,41 @@ def getSpaces(num):
         toReturn += " "
     return toReturn
 
+def writeResults(mutInfo, varInfo):
+        sys.stdout.write("\n\n\n")
+        for i in range(len(clusterings)):
+            sys.stdout.write(str(i) + getSpaces(12 -len(str(i))) + clusterings[i].getSource() + '\n')
+        sys.stdout.write("\n\n\n")
+        sys.stdout.write(getSpaces(12)+ "Mutual Information\n\n")
+        sys.stdout.write(getSpaces(12))
+        for i in range(len(clusterings)):
+            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
+        for i in range(len(mutInfo)):
+            print ""
+            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
+            for j in range(len(mutInfo[i])):
+                if len(str(mutInfo[i][j])) < 11:
+                    sys.stdout.write(str(mutInfo[i][j]) + getSpaces(12 - len(str(mutInfo[i][j]))))
+                else:
+                    sys.stdout.write(str(mutInfo[i][j])[:11] + " ")
+
+        sys.stdout.write("\n\n\n")
+        sys.stdout.write(getSpaces(12) + "Variation Of Information\n\n")
+        sys.stdout.write(getSpaces(12))
+        for i in range(len(clusterings)):
+            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
+        for i in range(len(varInfo)):
+            print ""
+            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
+            for j in range(len(varInfo[i])):
+                if len(str(varInfo[i][j])) < 11:
+                    sys.stdout.write(str(varInfo[i][j]) + getSpaces(12 - len(str(varInfo[i][j]))))
+                else:
+                    sys.stdout.write(str(varInfo[i][j])[:11] + " ")
+        sys.stdout.write("\n\n\n")
+
+
+
 if __name__ == '__main__':
     args = sys.argv
     if '-t' in args:
@@ -148,6 +188,7 @@ if __name__ == '__main__':
         print "Variation Info single cluster to singletons: ", variationOfInformation(clusterings[4], clusterings[5])
         print "Mutual Info no Overlap: ", mutualInformation(clusterings[2], clusterings[3])
         print "Variation Info no overlap: ", variationOfInformation(clusterings[2], clusterings[3])
+    #Compare all clusters in a amongst themselves
     elif '-f' in args:
         ifile = args[args.index('-f')+1]
         if '-o' in args:
@@ -160,44 +201,55 @@ if __name__ == '__main__':
                 buildCluster(line.strip())
         mutInfo = np.zeros((len(clusterings), len(clusterings)))
         varInfo = np.zeros((len(clusterings), len(clusterings)))
-
+        t = []
         for i in range(len(clusterings)):
             for j in range(len(clusterings)):
+                startTime = time.time()
                 mutInfo[i][j] = mutualInformation(clusterings[i], clusterings[j])
                 mutInfo[j][i] = mutInfo[i][j]
                 varInfo[i][j] = variationOfInformation(clusterings[i], clusterings[j])
                 varInfo[j][i] = varInfo[i][j]
+                endTime = time.time()
+                t.append(endTime-startTime)
+        writeResults(mutInfo, varInfo)
+        print sum(t)/len(t)
+    #Compare all clusters in one file to all clusters in another file
+    elif '-c' in args:
+        ifile1 = args[args.index('-c')+1]
+        ifile2 = args[args.index('-c')+2]
+        file1Entries = []
+        file2Entries = []
 
-        sys.stdout.write("\n\n\n")
-        for i in range(len(clusterings)):
-            sys.stdout.write(str(i) + getSpaces(12 -len(str(i))) + clusterings[i].getSource() + '\n')
-        sys.stdout.write("\n\n\n")
-        sys.stdout.write(getSpaces(12)+ "Mutual Information\n\n")
-        sys.stdout.write(getSpaces(12))
-        for i in range(len(clusterings)):
-            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
-        for i in range(len(mutInfo)):
-            print ""
-            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
-            for j in range(len(mutInfo[i])):
-                if len(str(mutInfo[i][j])) < 11:
-                    sys.stdout.write(str(mutInfo[i][j]) + getSpaces(12 - len(str(mutInfo[i][j]))))
-                else:
-                    sys.stdout.write(str(mutInfo[i][j])[:11] + " ")
+        with open(ifile1, 'r') as f:
+            for line in f:
+                if len(line.strip()) ==0:
+                    continue
+                buildCluster(line.strip())
+                file1Entries.append(len(clusterings) -1)
+        with open(ifile2, 'r') as f:
+            for line in f:
+                if len(line.strip()) ==0:
+                    continue
+                buildCluster(line.strip())
+                file2Entries.append(len(clusterings) -1)
 
-        sys.stdout.write("\n\n\n")
-        sys.stdout.write(getSpaces(12) + "Variation Of Information\n\n")
-        sys.stdout.write(getSpaces(12))
+        mutInfo = np.zeros((len(clusterings), len(clusterings)))
+        varInfo = np.zeros((len(clusterings), len(clusterings)))
+
         for i in range(len(clusterings)):
-            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
-        for i in range(len(varInfo)):
-            print ""
-            sys.stdout.write(str(i) + getSpaces(12-len(str(i))))
-            for j in range(len(varInfo[i])):
-                if len(str(varInfo[i][j])) < 11:
-                    sys.stdout.write(str(varInfo[i][j]) + getSpaces(12 - len(str(varInfo[i][j]))))
-                else:
-                    sys.stdout.write(str(varInfo[i][j])[:11] + " ")
-        sys.stdout.write("\n\n\n")
+            for j in range(len(clusterings)):
+                if (i in file1Entries and j in file1Entries) or (i in file2Entries and j in file2Entries):
+                    mutInfo[i][j] = -1
+                    mutInfo[j][i] = mutInfo[i][j]
+                    varInfo[i][j] = -1
+                    varInfo[j][i] = varInfo[i][j]
+                    continue
+
+                mutInfo[i][j] = mutualInformation(clusterings[i], clusterings[j])
+                mutInfo[j][i] = mutInfo[i][j]
+                varInfo[i][j] = variationOfInformation(clusterings[i], clusterings[j])
+                varInfo[j][i] = varInfo[i][j]
+        writeResults(mutInfo, varInfo)
+
 
 
